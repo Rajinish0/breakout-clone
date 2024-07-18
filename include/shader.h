@@ -11,23 +11,24 @@
 
 class Shader {
 
-private:
-	unsigned int shaderProg;
-
 public :
 	
+    unsigned int shaderProg;
+
+    Shader() = default;
 	Shader(std::string vertexSource,
 		   std::string fragmentSource,
 		   std::string geometrySource = "");
 
-	void use();
-	void setBool(const std::string& name, bool value) const;
-	void setInt(const std::string& name, int value) const;
-	void setFloat(const std::string& name, float value) const;
-	void setVec3(const std::string& name, glm::vec3 value) const;
-	void setVec2(const std::string& name, glm::vec2 value) const;
-	void setMatrix(const std::string& name, glm::mat4 value) const;
-	void setUniformBlockBinding(const std::string& name, int bindingPoint) const;
+	Shader& use();
+	Shader& setBool(const std::string& name, bool value);
+	Shader& setInt(const std::string& name, int value);
+	Shader& setFloat(const std::string& name, float value);
+	Shader& setVec4(const std::string& name, glm::vec4 value);
+	Shader& setVec3(const std::string& name, glm::vec3 value);
+	Shader& setVec2(const std::string& name, glm::vec2 value);
+	Shader& setMatrix(const std::string& name, glm::mat4 value);
+	Shader& setUniformBlockBinding(const std::string& name, int bindingPoint);
 	unsigned int getLoc(const std::string& name) const;
 
 	//unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
@@ -36,10 +37,12 @@ public :
 	
 	static std::string loadSource(std::string source);
 	static unsigned int compileShader(GLenum type, std::string& sourceCode);
+
+    ~Shader();
 private:
 	// utility function for checking shader compilation/linking errors.
 	// ------------------------------------------------------------------------
-	void checkCompileErrors(GLuint shader, std::string type)
+	void checkCompileErrors(GLuint shader, std::string type, std::string sourceFile = "")
 	{
 		GLint success;
 		GLchar infoLog[1024];
@@ -49,7 +52,7 @@ private:
 			if (!success)
 			{
 				glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-				std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+				std::cerr << "ERROR::SHADER_COMPILATION_ERROR" << "(" << sourceFile << ")"<< "of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
 			}
 		}
 		else
@@ -58,7 +61,7 @@ private:
 			if (!success)
 			{
 				glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-				std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+				std::cerr << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
 			}
 		}
 	}

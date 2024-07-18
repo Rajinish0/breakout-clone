@@ -1,4 +1,3 @@
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "funcs.h" 
 #include <glad/glad.h>
@@ -6,8 +5,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-
 
 namespace funcs{
 	unsigned int TextureFromFile(const std::string & path, std::string directory) {
@@ -278,5 +275,48 @@ namespace funcs{
 		//std::cout << "x axis " << c1;
 
 		return Mesh(vertices, textures, indices);
+	}
+
+	bool rectToRectCollision(GameObject& g1, GameObject& g2){
+		return (
+		   (g2.pos.x-g1.size.x <= g1.pos.x &&
+			g1.pos.x <= g2.pos.x + g2.size.x ) &&
+		   (g2.pos.y - g1.size.y <= g1.pos.y &&
+			g1.pos.y <= g2.pos.y + g2.size.y)
+		);		
+	}
+
+	glm::vec2 bestDirection(glm::vec2 targetVec){
+		glm::vec2 direcs[] {
+			UP_VEC, DOWN_VEC, LEFT_VEC, RIGHT_VEC
+		};
+
+		float mdot = 0.0f;
+		glm::vec2 out;
+		for (auto& direc : direcs){
+			float dot = glm::dot(targetVec, direc);
+			if (dot > mdot){
+				mdot = dot;
+				out = direc;
+			}
+		}
+		return out;
+	}
+
+	Collision rectToCircleCollision(GameObject& rect, Ball& circle){
+		glm::vec2 circleCenter = circle.pos + circle.radius;
+		glm::vec2 rectCenter = rect.pos + rect.size / 2.0f;
+
+		glm::vec2 halfSize = rect.size / 2.0f;
+		glm::vec2 diff = circleCenter - rectCenter;
+		glm::vec2 clamped = clamp(diff, -halfSize, halfSize);
+		glm::vec2 nearestPoint = clamped + rectCenter;
+		glm::vec2 difference = nearestPoint - circleCenter;
+		bool collide = glm::length(difference) < circle.radius;
+		
+		if (collide)
+			return Collision(true, bestDirection(difference), difference);
+		else 
+			return Collision(false, glm::vec2(0.0f), glm::vec2(0.0f));
 	}
 }

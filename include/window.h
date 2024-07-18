@@ -8,14 +8,14 @@ struct Window {
 	int W, H;
 	GLFWwindow* window;
 
-	Window(int w, int h)
+	Window(int w, int h, char* name = "Learning")
 		:W(w), H(h) {
 		glfwInit();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		window = glfwCreateWindow(w, h, "Learning opengl", NULL, NULL);
+		window = glfwCreateWindow(w, h, name, NULL, NULL);
 		if (window == NULL) {
 			std::cerr << "Failed to create window" << std::endl;
 			glfwTerminate();
@@ -30,7 +30,7 @@ struct Window {
 
 	void update() {
 		glfwSwapBuffers(window);
-		glfwPollEvents();
+		// glfwPollEvents();
 	}
 
 };

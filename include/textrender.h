@@ -37,7 +37,7 @@ class TextRenderer {
 public:
 	enum Mode {BOTTOM_LEFT, CENTER, TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT};
 	void renderText(Shader& shader, std::string text, float x, float y, float scale, glm::vec3 color,
-					Mode mode = BOTTOM_LEFT);
+					Mode mode = TOP_LEFT);
 	int addCharacterToStorage(const char c);
 	TextRenderer();
 	TextRenderer(const std::string& font);

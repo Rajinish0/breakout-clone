@@ -25,13 +25,13 @@ Shader::Shader(std::string vertexSource,
 
 
 	unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vSourceCode);
-	checkCompileErrors(vertexShader, "VERTEX");
+	checkCompileErrors(vertexShader, "VERTEX", vertexSource);
 	unsigned int fragShader = compileShader(GL_FRAGMENT_SHADER, fSourceCode);
-	checkCompileErrors(fragShader, "FRAGMENT");
+	checkCompileErrors(fragShader, "FRAGMENT", fragmentSource);
 	unsigned int geomShader;
 	if (geometrySource != "") {
 		geomShader = compileShader(GL_GEOMETRY_SHADER, gSourceCode);
-		checkCompileErrors(geomShader, "GEOMETRY");
+		checkCompileErrors(geomShader, "GEOMETRY", geometrySource);
 	}
 
 
@@ -49,34 +49,45 @@ Shader::Shader(std::string vertexSource,
 
 }
 
-void Shader::setBool(const std::string& name, bool value) const {
+Shader& Shader::setBool(const std::string& name, bool value) {
 	glUniform1i(getLoc(name), (int)value);
+    return (*this);
 }
 
-void Shader::setInt(const std::string& name, int value) const {
+Shader& Shader::setInt(const std::string& name, int value){
 	glUniform1i(getLoc(name), value);
+    return (*this);
 }
 
-void Shader::setFloat(const std::string& name, float value) const {
+Shader& Shader::setFloat(const std::string& name, float value){
 	glUniform1f(getLoc(name), value);
+    return (*this);
 }
 
-void Shader::setVec3(const std::string& name, glm::vec3 value) const {
+Shader& Shader::setVec4(const std::string& name, glm::vec4 value){
+	glUniform4f(getLoc(name), value.x, value.y, value.z, value.w);
+    return (*this);
+}
+
+Shader& Shader::setVec3(const std::string& name, glm::vec3 value){
 	glUniform3f(getLoc(name), value.x, value.y, value.z);
+    return (*this);
 }
 
-void Shader::setVec2(const std::string& name, glm::vec2 value) const {
+Shader& Shader::setVec2(const std::string& name, glm::vec2 value){
 	glUniform2f(getLoc(name), value.x, value.y);
+    return (*this);
 }
 
-void Shader::setMatrix(const std::string& name, glm::mat4 value) const{
-	// unsigned int loc = glGetUniformLocation(shaderProg, name.c_str());
+Shader& Shader::setMatrix(const std::string& name, glm::mat4 value){
 	glUniformMatrix4fv(getLoc(name), 1, GL_FALSE, glm::value_ptr(value));
+    return (*this);
 }
 
-void Shader::setUniformBlockBinding(const std::string& name, int bindingPoint) const {
+Shader& Shader::setUniformBlockBinding(const std::string& name, int bindingPoint){
 	unsigned int name_idx = glGetUniformBlockIndex(shaderProg, name.c_str());
 	glUniformBlockBinding(shaderProg, name_idx, bindingPoint);
+    return (*this);
 }
 
 unsigned int Shader::getLoc(const std::string& name) const{
@@ -95,7 +106,14 @@ unsigned int Shader::compileShader(GLenum type, std::string& sourceCode) {
 
 }
 
-void Shader::use() {
+Shader& Shader::use() {
 	glUseProgram(shaderProg);
+    return (*this);
 }
+
+Shader::~Shader(){
+    // glDeleteProgram(this->shaderProg);
+}
+
+
 
