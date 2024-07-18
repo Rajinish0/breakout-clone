@@ -463,6 +463,7 @@ Game::~Game(){
     delete pGenerator;
     delete postProc;
     delete audioMgr;
+    delete textRenderer;
     // alcDestroyContext(context);
     // alcCloseDevice(device);
 }
